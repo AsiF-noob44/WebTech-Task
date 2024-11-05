@@ -8,8 +8,8 @@ if (isset($_POST["submit"])) {
     $return_date = $_POST["return_date"];
     $fees = $_POST["fees"];
 
-echo "Student Full Name: <strong>" . $student_name . "</strong><br>";
-echo "Student ID: <strong>" . $student_id . "</strong><br>";
+    echo "Student Full Name: <strong>" . $student_name . "</strong><br>";
+    echo "Student ID: <strong>" . $student_id . "</strong><br>";
     echo "Book Title: <strong>" . $book_title . "</strong><br>";
     echo "Borrow Date: <strong>" . $borrow_date . "</strong><br>";
     echo "Token: <strong>" . $token . "</strong><br>";
@@ -18,4 +18,3 @@ echo "Student ID: <strong>" . $student_id . "</strong><br>";
 } else {
     echo "Form not submitted.";
 }
-?>
