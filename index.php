@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab Task</title>
+    <title>PHP Form Validation</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -33,6 +33,10 @@
                         <label for="student_name">Student Full Name:</label>
                         <input type="text" id="student_name" name="student_name" placeholder="Full Name" required>
 
+                        <label for="student_email">Student Email:</label>
+                        <input type="email" id="student_email" name="student_email"
+                            placeholder="example@student.aiub.edu" required>
+                        s
                         <label for="student_id">Student ID:</label>
                         <input type="text" id="student_id" name="student_id" placeholder="Student ID" required>
 
@@ -59,7 +63,7 @@
         </main>
         <div class="rightbox">
             ID:
-        <img src="ID.jpg" alt="ID">
+            <img src="ID.jpg" alt="ID">
 
         </div>
     </div>
