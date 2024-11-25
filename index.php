@@ -36,7 +36,7 @@
                         <label for="student_email">Student Email:</label>
                         <input type="email" id="student_email" name="student_email"
                             placeholder="example@student.aiub.edu" required>
-                        s
+
                         <label for="student_id">Student ID:</label>
                         <input type="text" id="student_id" name="student_id" placeholder="Student ID" required>
 
@@ -46,11 +46,12 @@
                         <label for="borrow_date">Borrow Date:</label>
                         <input type="date" id="borrow_date" name="borrow_date" placeholder="Borrow Date" required>
 
-                        <label for="token">Token:</label>
-                        <input type="text" id="token" name="token" placeholder="Token" required>
 
                         <label for="return_date">Return Date:</label>
                         <input type="date" id="return_date" name="return_date" placeholder="Return Date" required>
+
+                        <label for="token">Token:</label>
+                        <input type="text" id="token" name="token" placeholder="Token" required>
 
                         <label for="fees">Fees (if any):</label>
                         <input type="number" id="fees" name="fees" step="0.01" placeholder="0.00">
