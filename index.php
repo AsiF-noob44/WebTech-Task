@@ -35,13 +35,21 @@
 
                         <label for="student_email">Student Email:</label>
                         <input type="email" id="student_email" name="student_email"
-                            placeholder="example@student.aiub.edu" required>
+                            placeholder="**-*****-*@student.aiub.edu" required>
 
                         <label for="student_id">Student ID:</label>
                         <input type="text" id="student_id" name="student_id" placeholder="Student ID" required>
 
                         <label for="book_title">Book Title:</label>
-                        <input type="text" id="book_title" name="book_title" placeholder="Book Title" required>
+                        <select id="book_title" name="book_title" required>
+                            <option value="">-- Select a Book --</option>
+                            <option value="The Arab of the Future">The Arab of the Future</option>
+                            <option value="Fundamentals of Physics">Fundamentals of Physics</option>
+                            <option value="Physics and Chemistry of Atmosphere">Physics and Chemistry of Atmosphere
+                            </option>
+                        </select>
+
+
 
                         <label for="borrow_date">Borrow Date:</label>
                         <input type="date" id="borrow_date" name="borrow_date" placeholder="Borrow Date" required>
@@ -51,7 +59,7 @@
                         <input type="date" id="return_date" name="return_date" placeholder="Return Date" required>
 
                         <label for="token">Token:</label>
-                        <input type="text" id="token" name="token" placeholder="Token" required>
+                        <input type="text" id="token" name="token" placeholder="Token">
 
                         <label for="fees">Fees (if any):</label>
                         <input type="number" id="fees" name="fees" step="0.01" placeholder="0.00">

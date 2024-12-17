@@ -12,38 +12,52 @@ if (isset($_POST["submit"])) {
     $valid = true;
 
 
-    if (!preg_match("/^[a-zA-Z\s]+$/", $student_name)) {
-        echo "<span style='color: red; font-weight: bold;'>Invalid Name Format</span><br>";
+    if (!preg_match("/^([a-zA-Z]+\.)?\s?[a-zA-Z\s]+$/", $student_name)) {
+        echo "<span style='color: red; font-weight: bold;'>Invalid Name Format. Ensure the name starts with an optional designation followed by a valid name.</span><br>";
         $valid = false;
     }
+
 
     if (!preg_match("/^\d{2}-\d{5}-\d@student\.aiub\.edu$/", $student_email)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid Email Format</span><br>";
         $valid = false;
     }
 
+
     if (!preg_match("/^\d{2}-\d{5}-\d{1}$/", $student_id)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid ID Format</span><br>";
         $valid = false;
     }
 
+    preg_match("/^\d{2}-(\d{5})-\d{1}$/", $student_id, $matches);
+    $id_last_5_digits = $matches[1] ?? null;
+
+
     $borrow_date_time = strtotime($borrow_date);
     $return_date_time = strtotime($return_date);
-    if ($return_date_time - $borrow_date_time < 10 * 24 * 60 * 60) {
-        echo "<span style='color: red; font-weight: bold;'>Caution: The return date must be at least 10 days after the borrow date</span><br>";
+    $days_borrowed = ($return_date_time - $borrow_date_time) / (60 * 60 * 24);
+
+    if ($return_date_time < $borrow_date_time) {
+        echo "<span style='color: red; font-weight: bold;'>Error: The return date cannot be earlier than the borrow date.</span><br>";
         $valid = false;
     }
 
-    // Replacing the book name with a valid cookie name because im getting error with spaces in the Book title
+    if ($days_borrowed > 10) {
+        if (empty($token)) {
+            echo "<span style='color: red; font-weight: bold;'>Error: Borrowing for more than 10 days requires a valid token.</span><br>";
+            $valid = false;
+        } elseif ($token !== $id_last_5_digits) {
+            echo "<span style='color: red; font-weight: bold;'>Error: The token is invalid. It must match the last 5 digits of the student ID ($id_last_5_digits).</span><br>";
+            $valid = false;
+        }
+    }
 
     $cookie_name = preg_replace('/[^a-zA-Z0-9_]/', '_', $book_title);
-
 
     if (isset($_COOKIE[$cookie_name])) {
         echo "<span style='color: red; font-weight: bold;'>The book '$book_title' has already been borrowed. Please try again later.</span><br>";
         $valid = false;
     }
-
 
     if ($valid) {
         setcookie($cookie_name, $student_name, time() + 25, "/");
@@ -58,7 +72,7 @@ if (isset($_POST["submit"])) {
         echo "<p><strong>Book Title:</strong> $book_title</p>";
         echo "<p><strong>Borrow Date:</strong> $borrow_date</p>";
         echo "<p><strong>Return Date:</strong> $return_date</p>";
-        echo "<p><strong>Token:</strong> $token</p>";
+        echo "<p><strong>Token:</strong> " . ($token ?: "None") . "</p>";
         echo "<p><strong>Fees:</strong> " . ($fees ?: "None") . "</p>";
         echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
         echo "<hr>";
@@ -68,8 +82,9 @@ if (isset($_POST["submit"])) {
         echo "<strong>Book Title:</strong> $book_title <br>";
         echo '<br><span style="color: red; font-weight: bold;">Please Correct The Errors Above and Try Again.</span>';
     }
-
 } else {
-    echo "Form not submitted.";
+    echo "Form not submitted!";
 }
+
+
 ?>
