@@ -35,11 +35,123 @@
             }
             ?>
         </div>
+
         <main class="middle">
             <section class="section-1">
-                <div class="box-1">Box1</div>
-                <div class="box-2">Box2</div>
-                <div class="box-3">Box3</div>
+                <div class="box-1">
+                    <h2 style="text-align: center;">All Available Books</h2>
+                    <div class="allbooks">
+                        <?php
+                        include('connect.php');
+
+                        $sql = 'SELECT * FROM bookstable';
+                        $result = mysqli_query($conn, $sql);
+
+                        if ($result) {
+                            $allBooks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+                            foreach ($allBooks as $book) {
+                                echo '<div class="bookCart">
+                                        <h4>Book Name: ' . $book['book_Name'] . '</h4>
+                                        <h4>Author Name: ' . $book['author_Name'] . '</h4>
+                                        <h4>Quantity: ' . $book['quantity'] . '</h4>
+                                        <h4>Publication Year: ' . $book['publication_Year'] . '</h4>
+                                    </div>';
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <div class="box-2">
+                    <h2 style="text-align: center;">Update Books</h2>
+
+                    <form action="" method="get" class="bookFormRow">
+                        <label for="bookName">Search</label>
+                        <input class="input" type="text" name="searchValue" id="bookName">
+                        <input class="input" type="submit" name="searchBook" value="Search Book">
+                    </form>
+
+                    <form action="bookProcess.php" method="post">
+
+                        <?php
+                        if (isset($_GET['searchBook'])) {
+                            include('connect.php');
+
+                            $searchValue = mysqli_real_escape_string($conn, $_GET['searchValue']);
+
+                            $sql = is_numeric($searchValue)
+                                ? "SELECT * FROM bookstable WHERE id=$searchValue"
+                                : "SELECT * FROM bookstable WHERE book_Name='$searchValue'";
+
+                            $result = mysqli_query($conn, $sql);
+                            $book = mysqli_fetch_assoc($result);
+
+                            if ($book) {
+                                $bookId = $book['id'];
+                                $bookName = $book['book_Name'];
+                                $authorName = $book['author_Name'];
+                                $quantity = $book['quantity'];
+                                $publicationYear = $book['publication_Year'];
+                                ?>
+                                <input type="hidden" name="bookId" value="<?php echo $bookId; ?>">
+
+                                <div class="bookFormRow">
+                                    <label for="bookName">Book Name:</label>
+                                    <input class="input" type="text" name="bookName" id="bookName"
+                                        value="<?php echo $bookName; ?>">
+                                </div>
+                                <div class="bookFormRow">
+                                    <label for="authorName">Author Name:</label>
+                                    <input class="input" type="text" name="authorName" id="authorName"
+                                        value="<?php echo $authorName; ?>">
+                                </div>
+                                <div class="bookFormRow">
+                                    <label for="quantity">Quantity:</label>
+                                    <input class="input" type="text" name="quantity" id="quantity"
+                                        value="<?php echo $quantity; ?>">
+                                </div>
+                                <div class="bookFormRow">
+                                    <label for="publicationYear">Publication Year:</label>
+                                    <input class="input" type="text" name="publicationYear" id="publicationYear"
+                                        value="<?php echo $publicationYear; ?>">
+                                </div>
+                                <div class="bookFormRow">
+                                    <input class="input" type="submit" name="updateBook" value="Update Book">
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
+
+                    </form>
+                </div>
+
+                <div class="box-3">
+                    <h2 style="text-align: center;">Add Books</h2>
+
+                    <form action="bookProcess.php" method="post">
+                        <div class="bookFormRow">
+                            <label for="bookName">Book Name:</label>
+                            <input class="input" type="text" name="bookName" id="bookName">
+                        </div>
+                        <div class="bookFormRow">
+                            <label for="authorName">Author Name:</label>
+                            <input class="input" type="text" name="authorName" id="authorName">
+                        </div>
+                        <div class="bookFormRow">
+                            <label for="quantity">Quantity:</label>
+                            <input class="input" type="text" name="quantity" id="quantity">
+                        </div>
+                        <div class="bookFormRow">
+                            <label for="publicationYear">Publication Year:</label>
+                            <input class="input" type="text" name="publicationYear" id="publicationYear">
+                        </div>
+                        <div class="bookFormRow">
+                            <input class="input" type="submit" name="addBook" value="Add Book">
+                        </div>
+                    </form>
+                </div>
             </section>
 
             <section class="section-2">
@@ -47,6 +159,7 @@
                 <div class="box-5"><img src="images.jfif" alt=""></div>
                 <div class="box-6"><img src="book.jfif" alt=""></div>
             </section>
+
             <section class="section-3">
                 <div class="box-7">
                     <h2 style="text-align: center;">Library Borrow Form</h2>
@@ -65,17 +178,15 @@
                         <label for="book_title">Book Title:</label>
                         <select id="book_title" name="book_title" required>
                             <option value="">-- Select a Book --</option>
-                            <option value="The Arab of the Future">The Arab of the Future</option>
-                            <option value="Fundamentals of Physics">Fundamentals of Physics</option>
-                            <option value="Physics and Chemistry of Atmosphere">Physics and Chemistry of Atmosphere
-                            </option>
+                            <?php
+                            foreach ($allBooks as $book) {
+                                echo '<option value="' . $book['book_Name'] . '">' . $book['book_Name'] . '</option>';
+                            }
+                            ?>
                         </select>
-
-
 
                         <label for="borrow_date">Borrow Date:</label>
                         <input type="date" id="borrow_date" name="borrow_date" placeholder="Borrow Date" required>
-
 
                         <label for="return_date">Return Date:</label>
                         <input type="date" id="return_date" name="return_date" placeholder="Return Date" required>
@@ -92,10 +203,10 @@
                 <div class="box-8">Box8</div>
             </section>
         </main>
+
         <div class="rightbox">
             ID:
             <img src="ID.jpg" alt="ID">
-
         </div>
     </div>
 </body>

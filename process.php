@@ -11,24 +11,29 @@ if (isset($_POST["submit"])) {
 
     $valid = true;
 
+    // Validate student name
     if (!preg_match("/^([a-zA-Z]+\.)?\s?[a-zA-Z\s]+$/", $student_name)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid Name Format. Ensure the name starts with an optional designation followed by a valid name.</span><br>";
         $valid = false;
     }
 
+    // Validate student email
     if (!preg_match("/^\d{2}-\d{5}-\d@student\.aiub\.edu$/", $student_email)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid Email Format</span><br>";
         $valid = false;
     }
 
+    // Validate student ID
     if (!preg_match("/^\d{2}-\d{5}-\d{1}$/", $student_id)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid ID Format</span><br>";
         $valid = false;
     }
 
+    // Extract last 5 digits of student ID
     preg_match("/^\d{2}-(\d{5})-\d{1}$/", $student_id, $matches);
     $id_last_5_digits = $matches[1] ?? null;
 
+    // Validate dates
     $borrow_date_time = strtotime($borrow_date);
     $return_date_time = strtotime($return_date);
     $days_borrowed = ($return_date_time - $borrow_date_time) / (60 * 60 * 24);
@@ -38,6 +43,7 @@ if (isset($_POST["submit"])) {
         $valid = false;
     }
 
+    // Validate token if borrowing exceeds 10 days
     if ($days_borrowed > 10) {
         if (empty($token)) {
             echo "<span style='color: red; font-weight: bold;'>Error: Borrowing for more than 10 days requires a valid token.</span><br>";
@@ -48,7 +54,7 @@ if (isset($_POST["submit"])) {
         }
     }
 
-
+    // Validate token uniqueness
     $json_file = 'tokens.json';
     $tokens_used = [];
     if (file_exists($json_file)) {
@@ -63,49 +69,69 @@ if (isset($_POST["submit"])) {
         }
     }
 
+    // Check if the book is already borrowed using cookies
     $cookie_name = preg_replace('/[^a-zA-Z0-9_]/', '_', $book_title);
-
     if (isset($_COOKIE[$cookie_name])) {
         echo "<span style='color: red; font-weight: bold;'>The book '$book_title' has already been borrowed. Please try again later.</span><br>";
         $valid = false;
     }
 
     if ($valid) {
-        setcookie($cookie_name, $student_name, time() + 25, "/");
+        // Connect to the database
+        $conn = mysqli_connect("localhost", "root", "", "books");
+        if (!$conn) {
+            die("Database connection failed: " . mysqli_connect_error());
+        }
 
+        // Reduce the book quantity by 1
+        $sql = "UPDATE bookstable SET quantity = quantity - 1 WHERE book_Name = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "s", $book_title);
+        $update_result = mysqli_stmt_execute($stmt);
 
-        $token_data = [
-            "student_name" => $student_name,
-            "student_id" => $student_id,
-            "token" => $token ?: $id_last_5_digits,
-            "book_title" => $book_title,
-            "borrow_date" => $borrow_date,
-            "return_date" => $return_date,
-        ];
+        if ($update_result && mysqli_stmt_affected_rows($stmt) > 0) {
+            // Set a cookie to track the borrowed book
+            setcookie($cookie_name, $student_name, time() + 25, "/");
 
-        $tokens_used[] = $token_data;
-        file_put_contents($json_file, json_encode($tokens_used, JSON_PRETTY_PRINT));
+            // Add the borrow transaction to the tokens file
+            $token_data = [
+                "student_name" => $student_name,
+                "student_id" => $student_id,
+                "token" => $token ?: $id_last_5_digits,
+                "book_title" => $book_title,
+                "borrow_date" => $borrow_date,
+                "return_date" => $return_date,
+            ];
+            $tokens_used[] = $token_data;
+            file_put_contents($json_file, json_encode($tokens_used, JSON_PRETTY_PRINT));
 
-        echo "<div style='border: 1px solid #ccc; padding: 20px; width: 400px; margin: 20px auto; font-family: Arial, sans-serif;'>";
-        echo "<h2 style='text-align: center; color: #4CAF50;'>Library Borrow Receipt</h2>";
-        echo "<hr>";
-        echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
-        echo "<p><strong>Student Name:</strong> $student_name</p>";
-        echo "<p><strong>Student Email:</strong> $student_email</p>";
-        echo "<p><strong>Student ID:</strong> $student_id</p>";
-        echo "<p><strong>Book Title:</strong> $book_title</p>";
-        echo "<p><strong>Borrow Date:</strong> $borrow_date</p>";
-        echo "<p><strong>Return Date:</strong> $return_date</p>";
-        echo "<p><strong>Token:</strong> " . ($token ?: $id_last_5_digits) . "</p>";
-        echo "<p><strong>Fees:</strong> " . ($fees ?: "None") . "</p>";
-        echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
-        echo "<hr>";
-        echo "<p style='text-align: center; color: blue;'>Thank you for using our library!</p>";
-        echo "</div>";
+            // Display the borrow receipt
+            echo "<div style='border: 1px solid #ccc; padding: 20px; width: 400px; margin: 20px auto; font-family: Arial, sans-serif;'>";
+            echo "<h2 style='text-align: center; color: #4CAF50;'>Library Borrow Receipt</h2>";
+            echo "<hr>";
+            echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
+            echo "<p><strong>Student Name:</strong> $student_name</p>";
+            echo "<p><strong>Student Email:</strong> $student_email</p>";
+            echo "<p><strong>Student ID:</strong> $student_id</p>";
+            echo "<p><strong>Book Title:</strong> $book_title</p>";
+            echo "<p><strong>Borrow Date:</strong> $borrow_date</p>";
+            echo "<p><strong>Return Date:</strong> $return_date</p>";
+            echo "<p><strong>Token:</strong> " . ($token ?: $id_last_5_digits) . "</p>";
+            echo "<p><strong>Fees:</strong> " . ($fees ?: "None") . "</p>";
+            echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
+            echo "<hr>";
+            echo "<p style='text-align: center; color: blue;'>Thank you for using our library!</p>";
+            echo "</div>";
 
-        echo "<div style='text-align: center; margin-top: 20px;'>";
-        echo "<a href='index.php' style='text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; font-size: 16px;'>Go to Homepage</a>";
-        echo "</div>";
+            echo "<div style='text-align: center; margin-top: 20px;'>";
+            echo "<a href='index.php' style='text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; font-size: 16px;'>Go to Homepage</a>";
+            echo "</div>";
+        } else {
+            echo "<span style='color: red; font-weight: bold;'>Error: Failed to update the book quantity. Please try again.</span>";
+        }
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
     } else {
         echo "<strong>Book Title:</strong> $book_title <br>";
         echo '<br><span style="color: red; font-weight: bold;">Please Correct The Errors Above and Try Again.</span>';
@@ -113,3 +139,4 @@ if (isset($_POST["submit"])) {
 } else {
     echo "Form not submitted!";
 }
+?>

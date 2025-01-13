@@ -1,6 +1,7 @@
 .container {
   display: flex;
 }
+
 .leftbox {
   width: 200px;
   height: 700px;
@@ -42,44 +43,62 @@
   justify-content: center;
   position: relative;
 }
+
 .section-1 {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   margin-top: 37px;
 }
-.box-1 {
-  width: 550px;
-  height: 200px;
-  padding: 5px;
-  background-color: aqua;
-  text-align: center;
-  margin: 5px;
-  font-size: 20px;
-  font-weight: 600;
-}
-.box-2 {
-  width: 550px;
-  height: 200px;
-  padding: 5px;
-  background-color: brown;
-  text-align: center;
-  margin: 5px;
-  font-size: 20px;
-  font-weight: 600;
-}
+
+.box-1,
+.box-2,
 .box-3 {
   width: 550px;
-  height: 200px;
+
   padding: 5px;
-  background-color: chartreuse;
   text-align: center;
   margin: 5px;
   font-size: 20px;
   font-weight: 600;
+  overflow: auto; /* Allow scrolling when content exceeds max height */
+  box-sizing: border-box; /* Include padding in the total height/width calculation */
 }
+
+.box-1 {
+  background-color: aqua;
+}
+
+.box-2 {
+  background-color: brown;
+}
+
+.box-3 {
+  background-color: chartreuse;
+}
+
+.allbooks {
+  display: flex;
+  flex-wrap: wrap; /* This allows items to wrap to the next line */
+  justify-content: space-around; /* Adjust spacing between the book elements */
+}
+
+.bookCart {
+  flex: 1 1 200px; /* Allow books to grow and shrink, but no less than 200px wide */
+  margin: 10px;
+  padding: 10px;
+  background-color: lightgray;
+  text-align: center;
+  border-radius: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.bookCart h4 {
+  margin: 5px 0; /* Add some spacing around the book details */
+}
+
 .section-2 {
   display: flex;
   justify-content: center;
@@ -96,6 +115,7 @@
   font-size: 20px;
   font-weight: 600;
 }
+
 .box-5 {
   width: 130px;
   height: 150px;
@@ -106,6 +126,7 @@
   font-size: 20px;
   font-weight: 600;
 }
+
 .box-6 {
   width: 130px;
   height: 150px;
@@ -155,6 +176,7 @@
   font-size: 20px;
   font-weight: 600;
 }
+
 form {
   width: 280px;
   margin: 10px auto;
@@ -162,6 +184,7 @@ form {
   border: 1px solid #fff;
   border-radius: 10px;
 }
+
 label,
 input,
 select {
@@ -169,6 +192,7 @@ select {
   margin-bottom: 5px;
   width: 100%;
 }
+
 input[type="text"],
 input[type="date"],
 input[type="number"],
@@ -179,10 +203,12 @@ select {
   font-size: 14px;
   background-color: #f9f9f9;
 }
+
 select {
   height: 30px;
   cursor: pointer;
 }
+
 input[type="submit"] {
   margin-top: 10px;
   padding: 2px;
@@ -192,6 +218,7 @@ input[type="submit"] {
   cursor: pointer;
   border-radius: 10px;
 }
+
 input[type="submit"]:hover {
   background-color: #218838;
 }
