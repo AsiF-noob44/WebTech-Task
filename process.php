@@ -76,20 +76,24 @@ if (isset($_POST["submit"])) {
         $valid = false;
     }
 
+    // Check if the book is available in the database
+    include('connect.php');
+    $sql = "SELECT quantity FROM bookstable WHERE book_Name = '$book_title'";
+    $result = mysqli_query($conn, $sql);
+    $book = mysqli_fetch_assoc($result);
+
+    if (!$book || $book['quantity'] <= 0) {
+        echo "<span style='color: red; font-weight: bold;'>Error: The book '$book_title' is not available at the moment.</span><br>";
+        $valid = false;
+    }
+
     if ($valid) {
-        // Connect to the database
-        $conn = mysqli_connect("localhost", "root", "", "books");
-        if (!$conn) {
-            die("Database connection failed: " . mysqli_connect_error());
-        }
-
         // Reduce the book quantity by 1
-        $sql = "UPDATE bookstable SET quantity = quantity - 1 WHERE book_Name = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $book_title);
-        $update_result = mysqli_stmt_execute($stmt);
+        $new_quantity = $book['quantity'] - 1;
+        $update_sql = "UPDATE bookstable SET quantity = $new_quantity WHERE book_Name = '$book_title'";
+        $update_result = mysqli_query($conn, $update_sql);
 
-        if ($update_result && mysqli_stmt_affected_rows($stmt) > 0) {
+        if ($update_result && mysqli_affected_rows($conn) > 0) {
             // Set a cookie to track the borrowed book
             setcookie($cookie_name, $student_name, time() + 25, "/");
 
@@ -130,7 +134,6 @@ if (isset($_POST["submit"])) {
             echo "<span style='color: red; font-weight: bold;'>Error: Failed to update the book quantity. Please try again.</span>";
         }
 
-        mysqli_stmt_close($stmt);
         mysqli_close($conn);
     } else {
         echo "<strong>Book Title:</strong> $book_title <br>";
