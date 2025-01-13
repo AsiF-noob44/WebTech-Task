@@ -6,12 +6,13 @@
   height: 700px;
   padding: 10px;
   background-color: cornflowerblue;
-  text-align: center;
-  font-size: 20px;
+  text-align: left;
+  font-size: 15px;
   font-weight: 600;
   position: absolute;
   left: 100px;
   top: 50px;
+  overflow: auto;
 }
 
 .rightbox {

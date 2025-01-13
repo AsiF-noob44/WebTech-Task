@@ -11,7 +11,29 @@
 <body>
     <div class="container">
         <div class="leftbox">
-            Left Box
+            <h3>Tokens</h3>
+            <?php
+            $json_file = 'tokens.json';
+            if (file_exists($json_file)) {
+                $json_content = file_get_contents($json_file);
+                $tokens = json_decode($json_content, true);
+
+                if (!empty($tokens)) {
+                    echo "<ul>";
+                    foreach ($tokens as $token) {
+                        echo "<li>";
+                        echo "<strong>Student:</strong> " . htmlspecialchars($token['student_name']) . "<br>";
+                        echo "<strong>ID:</strong> " . htmlspecialchars($token['student_id']) . "<br>";
+                        echo "<strong>Token:</strong> " . htmlspecialchars($token['token']) . "<br>";
+                    }
+                    echo "</ul>";
+                } else {
+                    echo "<p>No tokens found.</p>";
+                }
+            } else {
+                echo "<p>No tokens found.</p>";
+            }
+            ?>
         </div>
         <main class="middle">
             <section class="section-1">

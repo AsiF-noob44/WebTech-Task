@@ -11,18 +11,15 @@ if (isset($_POST["submit"])) {
 
     $valid = true;
 
-
     if (!preg_match("/^([a-zA-Z]+\.)?\s?[a-zA-Z\s]+$/", $student_name)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid Name Format. Ensure the name starts with an optional designation followed by a valid name.</span><br>";
         $valid = false;
     }
 
-
     if (!preg_match("/^\d{2}-\d{5}-\d@student\.aiub\.edu$/", $student_email)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid Email Format</span><br>";
         $valid = false;
     }
-
 
     if (!preg_match("/^\d{2}-\d{5}-\d{1}$/", $student_id)) {
         echo "<span style='color: red; font-weight: bold;'>Invalid ID Format</span><br>";
@@ -31,7 +28,6 @@ if (isset($_POST["submit"])) {
 
     preg_match("/^\d{2}-(\d{5})-\d{1}$/", $student_id, $matches);
     $id_last_5_digits = $matches[1] ?? null;
-
 
     $borrow_date_time = strtotime($borrow_date);
     $return_date_time = strtotime($return_date);
@@ -52,6 +48,21 @@ if (isset($_POST["submit"])) {
         }
     }
 
+
+    $json_file = 'tokens.json';
+    $tokens_used = [];
+    if (file_exists($json_file)) {
+        $json_content = file_get_contents($json_file);
+        $tokens_used = json_decode($json_content, true) ?? [];
+        foreach ($tokens_used as $entry) {
+            if ($entry['token'] === $token) {
+                echo "<span style='color: red; font-weight: bold;'>Error: This token has already been used.</span><br>";
+                $valid = false;
+                break;
+            }
+        }
+    }
+
     $cookie_name = preg_replace('/[^a-zA-Z0-9_]/', '_', $book_title);
 
     if (isset($_COOKIE[$cookie_name])) {
@@ -61,6 +72,19 @@ if (isset($_POST["submit"])) {
 
     if ($valid) {
         setcookie($cookie_name, $student_name, time() + 25, "/");
+
+
+        $token_data = [
+            "student_name" => $student_name,
+            "student_id" => $student_id,
+            "token" => $token ?: $id_last_5_digits,
+            "book_title" => $book_title,
+            "borrow_date" => $borrow_date,
+            "return_date" => $return_date,
+        ];
+
+        $tokens_used[] = $token_data;
+        file_put_contents($json_file, json_encode($tokens_used, JSON_PRETTY_PRINT));
 
         echo "<div style='border: 1px solid #ccc; padding: 20px; width: 400px; margin: 20px auto; font-family: Arial, sans-serif;'>";
         echo "<h2 style='text-align: center; color: #4CAF50;'>Library Borrow Receipt</h2>";
@@ -72,11 +96,15 @@ if (isset($_POST["submit"])) {
         echo "<p><strong>Book Title:</strong> $book_title</p>";
         echo "<p><strong>Borrow Date:</strong> $borrow_date</p>";
         echo "<p><strong>Return Date:</strong> $return_date</p>";
-        echo "<p><strong>Token:</strong> " . ($token ?: "None") . "</p>";
+        echo "<p><strong>Token:</strong> " . ($token ?: $id_last_5_digits) . "</p>";
         echo "<p><strong>Fees:</strong> " . ($fees ?: "None") . "</p>";
         echo '<div style="border-top: 2px dashed #000; margin: 10px 0;"></div>';
         echo "<hr>";
         echo "<p style='text-align: center; color: blue;'>Thank you for using our library!</p>";
+        echo "</div>";
+
+        echo "<div style='text-align: center; margin-top: 20px;'>";
+        echo "<a href='index.php' style='text-decoration: none; background-color: #4CAF50; color: white; padding: 10px 20px; border-radius: 5px; font-size: 16px;'>Go to Homepage</a>";
         echo "</div>";
     } else {
         echo "<strong>Book Title:</strong> $book_title <br>";
@@ -85,6 +113,3 @@ if (isset($_POST["submit"])) {
 } else {
     echo "Form not submitted!";
 }
-
-
-?>
