@@ -1,16 +1,13 @@
 <?php
 if (isset($_POST['addBook'])) {
-    // Connect to the database
     $conn = mysqli_connect("localhost", "root", "", "books");
 
     if ($conn) {
-        // Fetch form data
         $bookName = $_POST['bookName'];
         $authorName = $_POST['authorName'];
         $quantity = intval($_POST['quantity']);
-        $publicationYear = intval($_POST['publicationYear']); // Include publication year
+        $publicationYear = intval($_POST['publicationYear']);
 
-        // SQL query to insert book data
         $sql = "INSERT INTO bookstable (book_Name, author_Name, quantity, publication_Year) 
                 VALUES ('$bookName', '$authorName', '$quantity', '$publicationYear')";
 
@@ -32,18 +29,15 @@ if (isset($_POST['addBook'])) {
 }
 
 if (isset($_POST['updateBook'])) {
-    // Connect to the database
     $conn = mysqli_connect("localhost", "root", "", "books");
 
     if ($conn) {
-        // Fetch form data
         $bookId = intval($_POST['bookId']);
         $bookName = $_POST['bookName'];
         $authorName = $_POST['authorName'];
         $quantity = intval($_POST['quantity']);
         $publicationYear = intval($_POST['publicationYear']); // Include publication year
 
-        // SQL query to update book data
         $sql = "UPDATE bookstable 
                 SET book_Name='$bookName', author_Name='$authorName', quantity='$quantity', publication_Year='$publicationYear' 
                 WHERE id='$bookId' OR book_Name='$bookName'";

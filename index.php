@@ -39,7 +39,7 @@
         <main class="middle">
             <section class="section-1">
                 <div class="box-1">
-                    <h2 style="text-align: center;">All Available Books</h2>
+                    <h2 style="text-align: center;">Available Books</h2>
                     <div class="allbooks">
                         <?php
                         include('connect.php');
@@ -50,14 +50,17 @@
                         if ($result) {
                             $allBooks = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
+                            echo '<div class="booksContainer">';
                             foreach ($allBooks as $book) {
-                                echo '<div class="bookCart">
-                                        <h4>Book Name: ' . $book['book_Name'] . '</h4>
-                                        <h4>Author Name: ' . $book['author_Name'] . '</h4>
-                                        <h4>Quantity: ' . $book['quantity'] . '</h4>
-                                        <h4>Publication Year: ' . $book['publication_Year'] . '</h4>
+                                echo '<div class="bookCard">
+                                    <h4 class="bookName">📖 ' . $book['book_Name'] . '</h4>
+                                    <p class="bookDetails">👤 Author: ' . $book['author_Name'] . '</p>
+                                    <p class="bookDetails">📦 Quantity: ' . $book['quantity'] . '</p>
+                                    <p class="bookDetails">📅 Published: ' . $book['publication_Year'] . '</p>
                                     </div>';
                             }
+                            echo '</div>';
+
                         }
                         ?>
                     </div>

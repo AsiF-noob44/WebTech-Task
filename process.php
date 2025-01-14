@@ -43,7 +43,6 @@ if (isset($_POST["submit"])) {
         $valid = false;
     }
 
-    // Validate token if borrowing exceeds 10 days
     if ($days_borrowed > 10) {
         if (empty($token)) {
             echo "<span style='color: red; font-weight: bold;'>Error: Borrowing for more than 10 days requires a valid token.</span><br>";
@@ -54,7 +53,6 @@ if (isset($_POST["submit"])) {
         }
     }
 
-    // Validate token uniqueness
     $json_file = 'tokens.json';
     $tokens_used = [];
     if (file_exists($json_file)) {
@@ -69,7 +67,6 @@ if (isset($_POST["submit"])) {
         }
     }
 
-    // Check if the book is already borrowed using cookies
     $cookie_name = preg_replace('/[^a-zA-Z0-9_]/', '_', $book_title);
     if (isset($_COOKIE[$cookie_name])) {
         echo "<span style='color: red; font-weight: bold;'>The book '$book_title' has already been borrowed. Please try again later.</span><br>";

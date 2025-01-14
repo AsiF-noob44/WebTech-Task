@@ -56,14 +56,13 @@
 .box-2,
 .box-3 {
   width: 550px;
-
   padding: 5px;
   text-align: center;
   margin: 5px;
   font-size: 20px;
   font-weight: 600;
-  overflow: auto; /* Allow scrolling when content exceeds max height */
-  box-sizing: border-box; /* Include padding in the total height/width calculation */
+  overflow: auto;
+  box-sizing: border-box;
 }
 
 .box-1 {
@@ -80,12 +79,12 @@
 
 .allbooks {
   display: flex;
-  flex-wrap: wrap; /* This allows items to wrap to the next line */
-  justify-content: space-around; /* Adjust spacing between the book elements */
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .bookCart {
-  flex: 1 1 200px; /* Allow books to grow and shrink, but no less than 200px wide */
+  flex: 1 1 200px;
   margin: 10px;
   padding: 10px;
   background-color: lightgray;
@@ -96,7 +95,7 @@
 }
 
 .bookCart h4 {
-  margin: 5px 0; /* Add some spacing around the book details */
+  margin: 5px 0;
 }
 
 .section-2 {
@@ -221,4 +220,43 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
   background-color: #218838;
+}
+
+.booksContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 10px;
+  background-color: #f0f8ff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bookCard {
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bookCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bookName {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.bookDetails {
+  font-size: 14px;
+  color: #555555;
+  margin: 5px 0;
+  line-height: 1.5;
 }
